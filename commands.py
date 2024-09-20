@@ -88,6 +88,10 @@ def command_info(command_name=None):
             console.print("Greets a person X times. Usage: greet [name] [times].")
         elif command_name == "locate":
             console.print("Finds files in the filesystem. Usage: locate [filename].")
+        elif command_name == "exit":
+            console.print("Exits typhoon.")
+        elif command_name == 'clear':
+            console.print("Clears the screen.")
     else:
         console.print("[bold red]This command wasn't found.[/bold red]")
 
