@@ -21,6 +21,7 @@
 
 import os
 import sys
+import requests
 from rich.console import Console
 from rich.progress import Progress
 from config import VERSION
@@ -39,6 +40,10 @@ commands = {
     "locate": {
         'func': lambda filename: locate_file(filename),  # Function for locate command
         'args': ["filename"]  # Possible arguments for autocompletion
+    },
+    "download": {
+        'func': lambda url: download_command(url), # Function to download a file or directory
+        'args': ["url"] # Possible arguments for autocompletion
     },
     "clear": lambda: clear_command(), # Clears the screen
     "exit": lambda: exit_command() # Function to exit
@@ -88,12 +93,45 @@ def command_info(command_name=None):
             console.print("Greets a person X times. Usage: greet [name] [times].")
         elif command_name == "locate":
             console.print("Finds files in the filesystem. Usage: locate [filename].")
+        elif command_name == "download":
+            console.print("Downloads a file. Usage: download [url]")
         elif command_name == "exit":
             console.print("Exits typhoon.")
         elif command_name == 'clear':
             console.print("Clears the screen.")
     else:
         console.print("[bold red]This command wasn't found.[/bold red]")
+
+def download_command(url):
+    try:
+        console.print(f"[bold cyan]Downloading from: {url}...[/bold cyan]")
+
+        # Initialize the download request
+        response = requests.get(url, stream=True)
+        total_size = int(response.headers.get('content-length', 0))
+        block_size = 1024 # 1 Kilobyte
+
+        if response.status_code != 200:
+            console.print(f"[bold red]Failed to connect: {response.status_code} {response.reason}[/bold red]")
+            return
+
+        filename = url.split("/")[-1]
+        progress_text = f"[cyan]Downloading {filename}...[/cyan]"
+        
+        # Using Progress to display a download bar
+        with Progress() as progress:
+            task = progress.add_task(progress_text, total=total_size)
+            with open(filename, "wb") as file:
+                for data in response.iter_content(block_size):
+                    file.write(data)
+                    progress.update(task, advance=len(data))
+
+        console.print("[bold green]Download completed successfully![/bold green]")
+
+    except requests.exceptions.RequestException as e:
+        console.print(f"[bold red]Error: {e}[/bold red]")
+    except Exception as e:
+        console.print(f"[bold red]Unexpected error: {str(e)}[/bold red]")
 
 def greet_user(name, times=1):
     # Example command with multiple arguments and progress bar
