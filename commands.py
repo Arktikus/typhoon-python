@@ -40,6 +40,7 @@ commands = {
         'func': lambda filename: locate_file(filename),  # Function for locate command
         'args': ["filename"]  # Possible arguments for autocompletion
     },
+    "clear": lambda: clear_command(), # Clears the screen
     "exit": lambda: exit_command() # Function to exit
 }
 
@@ -61,6 +62,10 @@ def execute_command(user_input):
 def exit_command():
     # Exits the application
     sys.exit(0)
+
+def clear_command():
+    # Clears the screen
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def list_commands():
     # List all commands
