@@ -43,11 +43,13 @@ commands = {
     },
     "download": {
         'func': lambda url: download_command(url), # Function to download a file or directory
-        'args': ["url"] # Possible arguments for autocompletion
+        'args': ["url"], # Possible arguments for autocompletion
+        'aliases': ['dl']  # Alias for download command
     },
     "calc": {
         'func': lambda *args: calc_command(" ".join(args)),
-        'args': ["expression"]
+        'args': ["expression"],
+        'aliases': ['c']  # Alias for calc command
     },
     "clear": lambda: clear_command(), # Clears the screen
     "exit": lambda: exit_command() # Function to exit
@@ -59,14 +61,20 @@ def execute_command(user_input):
     command = parts[0].lower()
     args = parts[1:]
 
-    if command in commands:
-        command_func = commands[command]
-        if isinstance(command_func, dict):  # For commands with multiple arguments
-            command_func['func'](*args)
-        else:
-            command_func(*args)
-    else:
-        console.print(f"[bold red]Unknown command:[/bold red] {command}. \nUse 'commands' to get a list of all available commands.")
+    # Iterate over the commands to find a match
+    for cmd, details in commands.items():
+        # Check if the command matches or if aliases are defined and match
+        if cmd == command or (isinstance(details, dict) and 'aliases' in details and command in details['aliases']):
+            if isinstance(details, dict) and 'func' in details:
+                # Handle commands with arguments
+                details['func'](*args)
+            else:
+                # Handle simple commands (like 'version', 'clear', etc.)
+                details(*args)
+            return
+
+    # If no matching command is found, display an error message
+    console.print(f"[bold red]Unknown command:[/bold red] {command}. \nUse 'commands' to get a list of all available commands.")
 
 def exit_command():
     # Exits the application
@@ -77,10 +85,13 @@ def clear_command():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def list_commands():
-    # List all commands
+    # List all commands and their aliases
     console.print("[bold yellow]Available commands:[/bold yellow]")
-    for cmd in commands.keys():
-        console.print(f"- [cyan]{cmd}[/cyan]")
+    for cmd, details in commands.items():
+        aliases = ""
+        if isinstance(details, dict) and 'aliases' in details:
+            aliases = f" (aliases: {', '.join(details['aliases'])})"
+        console.print(f"- [cyan]{cmd}[/cyan]{aliases}")
 
 def command_info(command_name=None):
     # Information about a specific command
