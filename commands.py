@@ -25,6 +25,7 @@ import requests
 from rich.console import Console
 from rich.progress import Progress
 from config import VERSION
+from datetime import datetime
 
 console = Console()
 
@@ -46,6 +47,8 @@ commands = {
         'args': ["expression"],
         'aliases': ['c']
     },
+    "date": lambda: date_command(),
+    "time": lambda: time_command(),
     "clear": lambda: clear_command(),
     "exit": lambda: exit_command()
 }
@@ -105,12 +108,24 @@ def command_info(command_name=None):
             console.print("Downloads a file. Usage: download [url]")
         elif command_name == "calc":
             console.print("Calculates an expression. Usage: calc [expression] (spaces don't matter and you can use +,-,*,/,** and %)")
+        elif command_name == "date":
+            console.print("Shows the current date.")
+        elif command_name == "time":
+            console.print("Shows the current time.")
         elif command_name == "exit":
             console.print("Exits typhoon.")
         elif command_name == 'clear':
             console.print("Clears the screen.")
     else:
         console.print("[bold red]This command wasn't found.[/bold red]")
+
+def date_command():
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    console.print(f"[bold green]Current Date:[/bold green] [bold cyan]{current_date}[/bold cyan]")
+
+def time_command():
+    current_time = datetime.now().strftime("%H:%M:%S")
+    console.print(f"[bold green]Current Time:[/bold green] [bold cyan]{current_time}[/bold cyan]")
 
 def calc_command(expression):
     """Safely evaluate a mathematical expression."""
