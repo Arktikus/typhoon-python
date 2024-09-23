@@ -28,31 +28,26 @@ from config import VERSION
 
 console = Console()
 
-# Define all commands with arguments
 commands = {
     "version": lambda: console.print(f"[bold magenta]typhoon[/bold magenta] [bold cyan]Version: {VERSION}[/bold cyan]"),
     "commands": lambda: list_commands(),
     "info": lambda cmd=None: command_info(cmd),
-    "greet": {
-        'func': lambda name, times=1: greet_user(name, times),  # Function with multiple arguments
-        'args': ["name", "times"]  # Possible arguments for autocompletion
-    },
     "locate": {
-        'func': lambda filename: locate_file(filename),  # Function for locate command
-        'args': ["filename"]  # Possible arguments for autocompletion
+        'func': lambda filename: locate_file(filename),
+        'args': ["filename"]
     },
     "download": {
-        'func': lambda url: download_command(url), # Function to download a file or directory
-        'args': ["url"], # Possible arguments for autocompletion
-        'aliases': ['dl']  # Alias for download command
+        'func': lambda url: download_command(url),
+        'args': ["url"],
+        'aliases': ['dl']
     },
     "calc": {
         'func': lambda *args: calc_command(" ".join(args)),
         'args': ["expression"],
-        'aliases': ['c']  # Alias for calc command
+        'aliases': ['c']
     },
-    "clear": lambda: clear_command(), # Clears the screen
-    "exit": lambda: exit_command() # Function to exit
+    "clear": lambda: clear_command(),
+    "exit": lambda: exit_command()
 }
 
 def execute_command(user_input):
@@ -104,8 +99,6 @@ def command_info(command_name=None):
             console.print("Lists all available commands.")
         elif command_name == "info":
             console.print("Shows information about a specific command. Usage: info [command_name].")
-        elif command_name == "greet":
-            console.print("Greets a person X times. Usage: greet [name] [times].")
         elif command_name == "locate":
             console.print("Finds files in the filesystem. Usage: locate [filename].")
         elif command_name == "download":
@@ -163,20 +156,6 @@ def download_command(url):
         console.print(f"[bold red]Error: {e}[/bold red]")
     except Exception as e:
         console.print(f"[bold red]Unexpected error: {str(e)}[/bold red]")
-
-def greet_user(name, times=1):
-    # Example command with multiple arguments and progress bar
-    try:
-        times = int(times)  # Ensure the number is an integer
-    except ValueError:
-        console.print("[bold red]Error: Must be a number.[/bold red]")
-        return
-
-    with Progress() as progress:
-        task = progress.add_task(f"[cyan]Sending greetings to {name}...[/cyan]", total=times)
-        for _ in range(times):
-            progress.update(task, advance=1)
-            console.print(f"[bold green]Hello, {name}![/bold green]")
 
 def locate_file(filename):
     # Function to search for a file in the filesystem

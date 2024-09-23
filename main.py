@@ -89,7 +89,6 @@ def display_commands_table():
     table.add_row("version", "Shows the current version of typhoon")
     table.add_row("commands", "Lists all avaiable commands")
     table.add_row("info", "Shows information about a specific command")
-    table.add_row("greet", "Greets a person X times")
     console.print(table)
 
 def show_progress():
