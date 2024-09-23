@@ -45,6 +45,10 @@ commands = {
         'func': lambda url: download_command(url), # Function to download a file or directory
         'args': ["url"] # Possible arguments for autocompletion
     },
+    "calc": {
+        'func': lambda *args: calc_command(" ".join(args)),
+        'args': ["expression"]
+    },
     "clear": lambda: clear_command(), # Clears the screen
     "exit": lambda: exit_command() # Function to exit
 }
@@ -95,12 +99,28 @@ def command_info(command_name=None):
             console.print("Finds files in the filesystem. Usage: locate [filename].")
         elif command_name == "download":
             console.print("Downloads a file. Usage: download [url]")
+        elif command_name == "calc":
+            console.print("Calculates an expression. Usage: calc [expression] (spaces don't matter and you can use +,-,*,/,** and %)")
         elif command_name == "exit":
             console.print("Exits typhoon.")
         elif command_name == 'clear':
             console.print("Clears the screen.")
     else:
         console.print("[bold red]This command wasn't found.[/bold red]")
+
+def calc_command(expression):
+    """Safely evaluate a mathematical expression."""
+    try:
+        # Define a safe set of allowed operators and functions
+        allowed_names = {
+            "__builtins__": None,  # Disable all built-ins
+        }
+        
+        # Evaluate the expression with allowed names only
+        result = eval(expression, {"__builtins__": None}, allowed_names)
+        console.print(f"[bold green]Result:[/bold green] {result}")
+    except Exception as e:
+        console.print(f"[bold red]Error evaluating expression:[/bold red] {str(e)}")
 
 def download_command(url):
     try:
