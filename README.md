@@ -1,4 +1,4 @@
-# typhoon
+# typhoon (python)
 
 typhoon is a terminal application that allows you to run a wide variety of commands with enhanced visuals and a more user-friendly interface, especially designed to improve the terminal experience on all major platforms.
 
